@@ -1,10 +1,12 @@
 name: Lint
 
-on: pull_request
+on:
+  pull_request:
+  merge_group:
 
 jobs:
   setup:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     steps:
       - uses: actions/checkout@v6
       - name: Find Dockerfiles
@@ -24,3 +26,11 @@ jobs:
       - uses: hadolint/hadolint-action@2332a7b74a6de0dda2e2221d575162eba76ba5e5 # pin@v3.3.0
         with:
           dockerfile: ${{ matrix.dockerfile }}
+  lint-complete:
+    if: always()
+    runs-on: ubuntu-slim
+    needs: [lint]
+    steps:
+      - name: Verify lint succeeded
+        run: |
+          [ "${{ needs.lint.result }}" = "success" ] || exit 1
