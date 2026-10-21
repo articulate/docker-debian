@@ -1,0 +1,12 @@
+name: Security
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  security-scans:
+    uses: articulate/security/.github/workflows/security.yml@v3
+    secrets: inherit
